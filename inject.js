@@ -6,6 +6,48 @@ window.confirm = function confirm(msg) {
   return true; /*simulates user clicking yes*/
 };
 
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+let f_date, requestMonth, correctIndex, alertType;
+const month_url = "https://topwebdev.pro/alerts";
+async function getMonth(url) {
+  const response = await fetch(url);
+  const data_alert = await response.json();
+  f_date = data_alert[0].first_date;
+  alertType = data_alert[0].type;
+  requestMonth = f_date.match(/[a-zA-Z]+/g).toString();
+  const d = new Date();
+  const realMonth = months[d.getMonth()];
+  const realDate = d.getDate();
+  if (d.getMonth)
+    if (realDate < 23) {
+      correctIndex = 2;
+    }
+    else {
+      if (requestMonth == realMonth)
+        correctIndex = 1;
+      else
+        correctIndex = 2;
+    }
+}
+getMonth(month_url);
+
+
+// get opentimeurl automatically
+function goToCurrentOpentimeUrl() {
+  const openTimeUrl2022Aug = "https://ha2.flica.net/full/otframe.cgi?BCID=003.100&ViewOT=1";
+  let i = months.indexOf(requestMonth) + 1;
+  const d = new Date();
+  const currentMonth = d.getMonth() + 1;
+  let gap;
+  if (currentMonth <= i) {
+    gap = 100 + i - currentMonth;
+  }  
+  const myArray = openTimeUrl2022Aug.split("100");
+  let newIdx = gap.toString();
+  let openTimeNewUrl = myArray[0] + newIdx + myArray[1];
+  location.href = openTimeNewUrl;
+}
+
 //Getting a random integer between two values
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -13,9 +55,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-
 //section that get refresh random time
-const refresh_time_url = "http://localhost/refresh"
+const refresh_time_url = "https://topwebdev.pro/refresh"
 let timeConvertMin;
 async function getRefreshTime(url) {
   const response = await fetch(url);
@@ -74,7 +115,7 @@ class S extends B {
   }
 }
 
-let diff = ['25AUG'];
+let diff = ['29AUG'];
 const getElementByXpath = (path) => {
   var elements;
   try {
@@ -100,7 +141,7 @@ const getElementByXpath = (path) => {
 
 if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
-  const user_url = "http://localhost/users";
+  const user_url = "https://topwebdev.pro/users";
   async function autoSignIn(url) {
     const response = await fetch(url);
     const credential_data = await response.json();
@@ -125,55 +166,60 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
   const firstThread = setInterval(() => {
     console.log('here');
 
-    const els = Array.from(
-      document.body.firstChild.nextSibling.firstChild.contentWindow.document.getElementsByTagName(
-        'a'
-      )
-    ).filter((e) => e.innerHTML.indexOf('View Reserve Grid') >= 0);
-    if (els.length > 0) {
-      els[1].click();
-      const secondThread = setInterval(async () => {
-        console.log(
-          document
-            .getElementsByTagName('iframe')[1]
-            .contentWindow.document.querySelectorAll(
-              'table td.ng-scope.buffer-color-red'
-            ).length
-        );
-        if (
-          document
-            .getElementsByTagName('iframe')[1]
-            .contentWindow.document.querySelectorAll(
-              'table td.ng-scope.buffer-color-red'
-            ).length == 0
-        )
-          return;
-        const outdated = Array.from(
-          document
-            .getElementsByTagName('iframe')[1]
-            .contentWindow.document.querySelectorAll(
-              'table td.ng-scope.buffer-color-red'
-            ),
-          (e) =>
-            e.previousElementSibling.previousElementSibling
-              .previousElementSibling.innerText
-        );
-        diff =
-          localStorage.outdated &&
-          outdated.filter(
-            (x) => !JSON.parse(localStorage.outdated).includes(x)
-          );
-        console.log("diff============>", diff);
-        localStorage.setItem('outdated', JSON.stringify(outdated));
-        localStorage.setItem('diff', JSON.stringify(diff));
-        location.href =
-          'https://ha2.flica.net/full/otframe.cgi?BCID=004.049&ViewOT=1';
-        console.log('I will go to Opentime Pot');
+    const els = Array.from(document.body.firstChild.nextSibling.firstChild.contentWindow.document.getElementsByTagName('a')).filter((e) => e.innerHTML.indexOf('View Reserve Grid') >= 0);
+    // const els_opentime = Array.from(document.body.firstChild.nextSibling.firstChild.contentWindow.document.getElementsByTagName('a')).filter((e) => e.innerHTML.indexOf('View Opentime Pot') >= 0);
 
-        clearInterval(secondThread);
-      }, 100);
+    if (els.length > 0) {
+      els[correctIndex].click();
+      if (alertType == 1) {
+        const secondThread = setInterval(async () => {
+          // console.log(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length);
+          if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length == 0)
+            return;
+
+          const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red'),
+            (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
+
+          diff = localStorage.outdated && outdated.filter((x) => !JSON.parse(localStorage.outdated).includes(x));
+          console.log("diff============>", diff);
+
+          localStorage.setItem('outdated', JSON.stringify(outdated));
+          localStorage.setItem('diff', JSON.stringify(diff));
+
+          goToCurrentOpentimeUrl();
+
+          // els_opentime[correctIndex].click();
+          console.log('I will go to Opentime Pot');
+
+          clearInterval(secondThread);
+        }, 100);
+      }
+      else {
+        const secondThread = setInterval(async () => {
+          // console.log(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length);
+          if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green').length == 0)
+            return;
+
+          const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
+            (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
+
+          diff = localStorage.outdated && outdated.filter((x) => !JSON.parse(localStorage.outdated).includes(x));
+          console.log("diff============>", diff);
+
+          localStorage.setItem('outdated', JSON.stringify(outdated));
+          localStorage.setItem('diff', JSON.stringify(diff));
+
+          goToCurrentOpentimeUrl();
+
+          // els_opentime[correctIndex].click();
+          console.log('I will go to Opentime Pot');
+
+          clearInterval(secondThread);
+        }, 100);
+      }
 
       clearInterval(firstThread);
+
     }
   }, 500);
 } else if (
@@ -182,7 +228,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
   const fourthThread = setInterval(() => {
 
     // getting a range date from server
-    const alert_url = "http://localhost/alerts";
+    const alert_url = "https://topwebdev.pro/alerts";
     let firstDate, secondDate, curMonth, curFirstDate, curSecondDate;
     async function getAlert(url) {
       const response = await fetch(url);
@@ -193,18 +239,10 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
       curMonth = firstDate.match(/[a-zA-Z]+/g).toString().toUpperCase();  // string for specific month e: AUG
       curFirstDate = firstDate.match(/\d+/g);                             // first date for specific month  e: 22
       curSecondDate = secondDate.match(/\d+/g);                           // second date for specific month  e: 24
-      if (
-        document
-          .getElementsByTagName('iframe')[2]
-          .contentDocument.getElementsByTagName('td').length > 0
-      ) {
-        localStorage.setItem('diff', JSON.stringify(['25AUG']));        
+      if (document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td').length > 0) {
+        localStorage.setItem('diff', JSON.stringify(['29AUG']));
 
-        const days = [
-          ...document
-            .getElementsByTagName('iframe')[2]
-            .contentDocument.getElementsByTagName('td'),
-        ].filter((e) => e.innerText.includes(curMonth))
+        const days = [...document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td'),].filter((e) => e.innerText.includes(curMonth))
           .map((e) => [
             e.innerText,
             e.previousElementSibling.innerText,
@@ -214,7 +252,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               .nextElementSibling.nextElementSibling.innerText,
           ]);
 
-          
+
         let results = [];     // data between firstDate and secondDate
         let searchKey = []
         let s_date = parseInt(curFirstDate);
@@ -237,13 +275,8 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           }
         })
 
-        // console.log("results--------", results);
-
-        // let minDate = parseInt(firstDate.split(curMonth)[0]);
-        // let maxDate = parseInt(secondDate.split(curMonth)[0]);
-
         let finalResult = [];
-        
+
         // console.log("localStorage.diff ===========>", localStorage.diff);
         results.forEach(function (item) {
           let curDate = parseInt(item[0].trim().split(curMonth)[0]);

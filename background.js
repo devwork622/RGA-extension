@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(
             "from the extension");
             console.log("background =========>", request.data);
         if (request.data.length) {
-            fetch("http://localhost/index", {
+            fetch("https://topwebdev.pro/index", {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(request.data),

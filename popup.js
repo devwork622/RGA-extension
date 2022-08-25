@@ -47,7 +47,7 @@ switch_btn.addEventListener('click', function () {
 
 // funtion to send username and password to server
 user_add.addEventListener('click', async function () {
-  let url = 'http://localhost/users';
+  let url = 'https://topwebdev.pro/users';
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
   let data = { 'username': username, 'password': password };
@@ -65,7 +65,7 @@ user_add.addEventListener('click', async function () {
 })
 
 // function to get username and password from server
-const api_url = "http://localhost/users";
+const api_url = "https://topwebdev.pro/users";
 async function getapi(url) {
   const response = await fetch(url);
   const data_users = await response.json();
@@ -81,7 +81,7 @@ function showUsers(username, password) {
 
 // funtion to send email to server
 email_add.addEventListener('click', async function () {
-  let url = 'http://localhost/emails';
+  let url = 'https://topwebdev.pro/emails';
   const email = document.getElementById('email').value;
   let data = { 'email': email };
 
@@ -99,7 +99,7 @@ email_add.addEventListener('click', async function () {
 })
 
 // function to get email from server
-const email_url = "http://localhost/emails";
+const email_url = "https://topwebdev.pro/emails";
 async function getEmail(url) {
   const response = await fetch(url);
   const data_email = await response.json();
@@ -127,7 +127,7 @@ function showEmails(emails) {
     // console.log(typeof (remove_email[i]));
     remove_email[i].addEventListener('click', function (e) {
       let email_id = e.target.getAttribute("key");
-      fetch(`http://localhost/emails/delete-email${email_id}`, {
+      fetch(`https://topwebdev.pro/emails/delete-email${email_id}`, {
         method: 'DELETE',
       })
         .then(res => res.text()) // or res.json()
@@ -140,7 +140,7 @@ function showEmails(emails) {
 
 // funtion to send refresh time to server
 refresh_add.addEventListener('click', async function () {
-  let url = 'http://localhost/refresh';
+  let url = 'https://topwebdev.pro/refresh';
   const time1 = document.getElementById('time1').value;
   const time2 = document.getElementById('time2').value;
   let data = { 'firstTime': time1, 'secondTime': time2 };
@@ -159,7 +159,7 @@ refresh_add.addEventListener('click', async function () {
 })
 
 // function to get refresh time from server
-const refresh_url = "http://localhost/refresh";
+const refresh_url = "https://topwebdev.pro/refresh";
 async function getRefresh(url) {
   const response = await fetch(url);
   const data_refresh = await response.json();
@@ -175,7 +175,7 @@ function showRefresh(time1, time2) {
 
 // funtion to send main information to server
 alert_add_btn.addEventListener('click', async function () {
-  let url = 'http://localhost/alerts';
+  let url = 'https://topwebdev.pro/alerts';
   const alertName = document.getElementById('alertname').value;
   const firstDate = document.getElementById('fdate').value;
   const secondDate = document.
@@ -302,7 +302,7 @@ alert_add_btn.addEventListener('click', async function () {
 
 
 // function to get alerts information from server
-const alert_url = "http://localhost/alerts";
+const alert_url = "https://topwebdev.pro/alerts";
 async function getAlert(url) {
   const response = await fetch(url);
   const data_alert = await response.json();
