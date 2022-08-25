@@ -1,0 +1,24 @@
+* {
+    font-family: 'verdana';
+  }
+  table {
+    margin-bottom: 15px;
+    border-collapse: collapse;
+  }
+  input {
+    margin: 5px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    font: 13px 'verdana';
+    padding: 5px;
+  }
+  th {
+    font-weight: bold
+  }
+  table [type="text"],
+  table [type="email"],
+  table [type="number"] {
+    display: block;
+    width: 90px;
+  }

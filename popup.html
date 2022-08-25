@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Ryan's Extension</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/all.css">
+  <link rel="stylesheet" href="css/toggle.css">
+  <link rel="stylesheet" href="css/setting.css">
+  <script src="js/jquery.slim.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+
+<body style="width: 800px;">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between">
+    <a class="navbar-brand" href="javascript:void(0)">RGA extension</a>
+    <div class="right">
+      <label class="switch">
+        <input type="checkbox" id="switch_btn">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row block-border">
+      <div class="col-md-6 my-3">
+        <h3>User Setting</h3>
+        <form action="">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Username" id="username">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" placeholder="Password" id="password">
+            <span toggle="#password-field" class="fa fa-fw fa-eye-slash field-icon toggle-password"
+              id="toggle_pass"></span>
+          </div>
+          <button type="button" class="btn btn-primary" id="user_add">Add</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <table class="table mt-5">
+          <thead class="thead-light">
+            <tr>
+              <th>Username</th>
+              <th>Password</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="users_tbody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row my-3 block-border">
+      <div class="col-md-6 my-3">
+        <h3>Email Setting</h3>
+        <form action="">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Email" id="email">
+          </div>
+          <button type="button" class="btn btn-primary" id="email_add">Add</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <table class="table mt-5">
+          <thead class="thead-light">
+            <tr>
+              <th>No</th>
+              <th>email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="email_tbody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row my-3 block-border">
+      <div class="col-md-6 my-3">
+        <h3>Refresh Time</h3>            
+        <form action="">
+          <div class="form-group ">
+            <div class="d-flex align-items-center py-2">
+              <label style="font-weight:bold; padding-right: 10px;">Min</label>
+              <input type="number" class="form-control" placeholder="5" id="time1" min="5" max="30" value="5">
+              <label>Seconds</label>
+            </div>
+            <div class="d-flex align-items-center py-2">
+              <label style="font-weight:bold; padding-right: 10px;">Max</label>
+              <input type="number" class="form-control" placeholder="30" id="time2" min="5" max="30" value="30">
+              <label>Seconds</label>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" id="refresh_add">Add</button>
+        </form>
+      </div>   
+      <div class="col-md-6">
+        <div class="alert alert-secondary" style="margin-top: 70px;">
+          Extension will be refreshed between <strong class="text-danger" id="refresh_time1"></strong> and <strong class="text-danger" id="refresh_time2"></strong> seconds randomly 
+        </div>
+      </div>
+    </div>
+    <div class="row my-3 block-border">
+      <div class="col-md-6 my-3">
+        <h3>Main Setting</h3>
+        <form action="">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Alert Name" id="alertname">
+          </div>
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6">
+                <label>First Date:</label>
+                <input type="date" class="form-control" id="fdate">
+              </div>
+              <div class="col-md-6">
+                <label>Second Date:</label>
+                <input type="date" class="form-control" id="sdate">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="type">Type:</label>
+            <select class="form-control" id="alert_type" name="type">
+              <option value="1">PPU</option>
+              <option value="2">DROP</option>
+            </select>
+          </div>
+          <div class="form-group display-trip" id="d_trip">
+            <input type="text" class="form-control" placeholder="Scheduled Trip" id="sch_trip">
+          </div>
+
+          <button type="button" class="btn btn-primary" id="alert_add_btn">Add</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <div id="alert_tbody" class="mt-5">
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
