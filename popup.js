@@ -9,18 +9,18 @@ toggle_pass.addEventListener('click', function () {  // toggle password section
   }
 })
 
-alert_type.addEventListener('change', function () {       // to show/hide scheduled trip in main setting
-  const options = document.getElementById('alert_type').options;
-  for (let i = 0; i < options.length; i++) {
-    if (options[i].selected) {
-      console.log(options[i].value);
-      if (options[i].value == 2)
-        document.getElementById('d_trip').style.display = "block";
-      else
-        document.getElementById('d_trip').style.display = "none";
-    }
-  }
-})
+// alert_type.addEventListener('change', function () {       // to show/hide scheduled trip in main setting
+//   const options = document.getElementById('alert_type').options;
+//   for (let i = 0; i < options.length; i++) {
+//     if (options[i].selected) {
+//       console.log(options[i].value);
+//       if (options[i].value == 2)
+//         document.getElementById('d_trip').style.display = "block";
+//       else
+//         document.getElementById('d_trip').style.display = "none";
+//     }
+//   }
+// })
 
 
 let switch_btn = document.getElementById("switch_btn")    // switch toggle button
@@ -37,8 +37,6 @@ switch_btn.addEventListener('click', function () {
         if (counter % 2 == 0) {
           location.href = "https://ha2.flica.net/ui/public/login/";
         }
-        // else
-        //   window.close();
 
       },
     })
@@ -52,7 +50,7 @@ user_add.addEventListener('click', async function () {
   const password = document.getElementById('password').value;
   let data = { 'username': username, 'password': password };
 
-  document.getElementById("users_tbody").innerHTML = `<tr id="user_row"><td>${username}</td><td>${password}</td><td><p>none</p></td></tr>`;
+  document.getElementById("users_tbody").innerHTML = `<tr id="user_row"><td>${username}</td><td>${password}</td></tr>`;
 
   let res = fetch(url, {
     method: 'POST',
@@ -75,7 +73,7 @@ getapi(api_url);
 
 // function to define innerHTML for HTML table
 function showUsers(username, password) {
-  document.getElementById("users_tbody").innerHTML = `<tr id="user_row"><td>${username}</td><td>${password}</td><td><p>none</p></td></tr>`;
+  document.getElementById("users_tbody").innerHTML = `<tr id="user_row"><td>${username}</td><td>${password}</td></tr>`;
 }
 
 
@@ -179,12 +177,12 @@ alert_add_btn.addEventListener('click', async function () {
   const alertName = document.getElementById('alertname').value;
   const firstDate = document.getElementById('fdate').value;
   const secondDate = document.
-  getElementById('sdate').value;
+    getElementById('sdate').value;
   const selectOption = document.getElementById('alert_type');
   const alertType = selectOption.options[selectOption.selectedIndex].value;
   let scheduledTrip, stringFirstMonth, stringSecondMonth, convertedFirstDate;
-  if (alertType == 1) scheduledTrip = "";
-  else scheduledTrip = document.getElementById('sch_trip').value;
+  // if (alertType == 1) scheduledTrip = "";
+  // else scheduledTrip = document.getElementById('sch_trip').value;
   let firstDateArray = firstDate.split("-");
   let secondDateArray = secondDate.split("-");
   let numFirstMonth = Number(firstDateArray[1]);
@@ -275,7 +273,7 @@ alert_add_btn.addEventListener('click', async function () {
       console.log("Invalid Month");
 
   }
-  
+
   convertedFirstDate = (numFirstDate + stringFirstMonth).toString();
   convertedSecondDate = (numSecondDate + stringSecondMonth).toString();
 
@@ -284,7 +282,7 @@ alert_add_btn.addEventListener('click', async function () {
     'firstDate': convertedFirstDate,
     'secondDate': convertedSecondDate,
     'alertType': alertType,
-    'scheduledTrip': scheduledTrip,
+    // 'scheduledTrip': scheduledTrip,
   };
 
   let res = await fetch(url, {
@@ -310,14 +308,48 @@ async function getAlert(url) {
 }
 getAlert(alert_url);
 
-function showAlert(data_alert) {
-  let type;
-  if (data_alert[0].type == "1") type = "PPU";
-  else type = "DROP";
+function showAlert(alertData) {
+  let str_alertData = ``;
+  alertData.map((val, idx) => {
+    str_alertData += `<tr id="${val.id}">
+    <td>${idx + 1}</td>
+    <td>${val.name}</td>
+    <td>${val.first_date} - ${val.second_date}</td>
+    <td>${val.type == 1 ? "PPU" : "DROP"}</td>
+    <td><a href="#" name="remove_alert"  key=${val.id}>remove</a></td></tr>`
+  })
 
-  document.getElementById("alert_tbody").innerHTML = `<p>Name : <strong class="text-danger">${data_alert[0].name}</strong></p>
-    <p>First Date : <strong class="text-danger">${data_alert[0].first_date}</strong></p>
-    <p>Second Date : <strong class="text-danger">${data_alert[0].second_date}</strong></p>
-    <p>Type : <strong class="text-danger">${type}</strong></p>
-    <p>Scheduled Trip : <strong class="text-danger">${data_alert[0].scheduled_trip}</strong></p>`
+  document.getElementById("alert_tbody").innerHTML = str_alertData;
+  remove_alert = document.getElementsByName("remove_alert");
+  // console.log(remove_alert)
+  for (var i = 0; i < remove_alert.length; i++) {
+    // console.log(typeof (remove_alert[i]));
+    remove_alert[i].addEventListener('click', function (e) {
+      let alert_id = e.target.getAttribute("key");
+      fetch(`https://topwebdev.pro/alerts/delete-alert${alert_id}`, {
+        method: 'DELETE',
+      })
+        .then(res => res.text()) // or res.json()
+        .then(res => console.log(res))
+      // const remove_alert_ele = document.getElementById(alert_id);
+      // remove_alert_ele.remove();
+      getAlert(alert_url);
+    })
+  }
 }
+
+
+remove_all.addEventListener('click', async function () {
+  let result = confirm('Are you sure you want to delete all data for alert?');
+  // let message = result ? 'You clicked the OK button' : 'You clicked the Cancel button';
+  // alert(message);
+  if (result == true) {
+    fetch(`https://topwebdev.pro/alerts/delete-all`, {
+      method: 'DELETE',
+    })
+      .then(res => res.text()) // or res.json()
+      .then(res => console.log(res))    
+    getAlert(alert_url);
+  }
+
+})

@@ -25,9 +25,61 @@
     </div>
   </nav>
   <div class="container">
+    <p class="text-danger d-flex justify-content-center">Your browser must remain open for alerts to be generated</p>
     <div class="row block-border">
-      <div class="col-md-6 my-3">
-        <h3>User Setting</h3>
+      <div class="col-md-4 my-3">
+        <h5>Alert Setup</h5>
+        <form action="">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Alert Name" id="alertname">
+          </div>
+          <div class="form-group">
+            <label>First Date:</label>
+            <input type="date" class="form-control" id="fdate">
+          </div>
+          <div class="form-group">
+            <label>Last Date:</label>
+            <input type="date" class="form-control" id="sdate">
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type:</label>
+            <select class="form-control" id="alert_type" name="type">
+              <option value="1">PPU</option>
+              <option value="2">DROP</option>
+            </select>
+          </div>
+          <!-- <div class="form-group display-trip" id="d_trip">
+            <input type="text" class="form-control" placeholder="Scheduled Trip" id="sch_trip">
+          </div> -->
+
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" id="alert_add_btn">Add</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-8">
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-danger btn-sm" id="remove_all">Remove All</button>
+        </div>
+        <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th>No</th>
+              <th>Name</th>
+              <th>Period</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="alert_tbody">
+          </tbody>          
+        </table>
+      </div>
+    </div>
+    <div class="row block-border">
+      <div class="col-md-5 my-3">
+        <h5>Login</h5>
         <form action="">
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Username" id="username">
@@ -37,16 +89,17 @@
             <span toggle="#password-field" class="fa fa-fw fa-eye-slash field-icon toggle-password"
               id="toggle_pass"></span>
           </div>
-          <button type="button" class="btn btn-primary" id="user_add">Add</button>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" id="user_add">Update</button>
+          </div>
         </form>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-7">
         <table class="table mt-5">
           <thead class="thead-light">
             <tr>
               <th>Username</th>
               <th>Password</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody id="users_tbody">
@@ -55,16 +108,18 @@
       </div>
     </div>
     <div class="row my-3 block-border">
-      <div class="col-md-6 my-3">
-        <h3>Email Setting</h3>
+      <div class="col-md-5 my-3">
+        <h5>Send alerts to these addresses</h5>
         <form action="">
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Email" id="email">
           </div>
-          <button type="button" class="btn btn-primary" id="email_add">Add</button>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" id="email_add">Add</button>
+          </div>
         </form>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-7">
         <table class="table mt-5">
           <thead class="thead-light">
             <tr>
@@ -79,8 +134,8 @@
       </div>
     </div>
     <div class="row my-3 block-border">
-      <div class="col-md-6 my-3">
-        <h3>Refresh Time</h3>            
+      <div class="col-md-5 my-3">
+        <h5>Refresh Interval</h5>
         <form action="">
           <div class="form-group ">
             <div class="d-flex align-items-center py-2">
@@ -94,55 +149,18 @@
               <label>Seconds</label>
             </div>
           </div>
-          <button type="button" class="btn btn-primary" id="refresh_add">Add</button>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" id="refresh_add">Update</button>
+          </div>
         </form>
-      </div>   
-      <div class="col-md-6">
+      </div>
+      <div class="col-md-7">
         <div class="alert alert-secondary" style="margin-top: 70px;">
-          Extension will be refreshed between <strong class="text-danger" id="refresh_time1"></strong> and <strong class="text-danger" id="refresh_time2"></strong> seconds randomly 
+          Extension will be refreshed between <strong class="text-danger" id="refresh_time1"></strong> and <strong
+            class="text-danger" id="refresh_time2"></strong> seconds randomly
         </div>
       </div>
     </div>
-    <div class="row my-3 block-border">
-      <div class="col-md-6 my-3">
-        <h3>Main Setting</h3>
-        <form action="">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Alert Name" id="alertname">
-          </div>
-          <div class="form-group">
-            <div class="row">
-              <div class="col-md-6">
-                <label>First Date:</label>
-                <input type="date" class="form-control" id="fdate">
-              </div>
-              <div class="col-md-6">
-                <label>Second Date:</label>
-                <input type="date" class="form-control" id="sdate">
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="type">Type:</label>
-            <select class="form-control" id="alert_type" name="type">
-              <option value="1">PPU</option>
-              <option value="2">DROP</option>
-            </select>
-          </div>
-          <div class="form-group display-trip" id="d_trip">
-            <input type="text" class="form-control" placeholder="Scheduled Trip" id="sch_trip">
-          </div>
-
-          <button type="button" class="btn btn-primary" id="alert_add_btn">Add</button>
-        </form>
-      </div>
-      <div class="col-md-6">
-        <div id="alert_tbody" class="mt-5">
-
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script src="popup.js"></script>
