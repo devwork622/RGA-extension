@@ -12,43 +12,40 @@ let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, cu
 async function getAlertData(url) {
   const response = await fetch(url);
   data_alert = await response.json();
-  //localStorage.setItem("data_alert", data_alert)
   limitCount = data_alert.length;
-  // localStorage.setItem("data_alert_length", data_alert.length)
-}
-getAlertData(month_url);
 
-function getNecessaryData() {
-  // let limitCount = localStorage.data_alert_length;
-  let j = Math.floor(Math.random() * limitCount)
-
-  console.log("data_alert------", data_alert);
-  console.log("limitCount------", limitCount);
-  console.log("j------", j);
-  
- 
-  firstDate = data_alert[j].first_date;
-  secondDate = data_alert[j].second_date;
-  alertType = data_alert[j].type;
-  console.log("firstDate------", firstDate);
-  console.log("secondDate------", secondDate);
-  console.log("type------", alertType);
-  curMonth = firstDate.match(/[a-zA-Z]+/g).toString().toUpperCase();  // string for specific month e: AUG
-  curFirstDate = firstDate.match(/\d+/g);                             // first date for specific month  e: 22
-  curSecondDate = secondDate.match(/\d+/g);                           // second date for specific month  e: 24
-  requestMonth = firstDate.match(/[a-zA-Z]+/g).toString();
-  const d = new Date();
-  const realMonth = months[d.getMonth()];
-  const realDate = d.getDate();
-
-  if (realDate < 23) {
-    correctIndex = 2;
-  }
+  if (data_alert == undefined) return;
   else {
-    if (requestMonth == realMonth)
-      correctIndex = 1;
-    else
+    let j = Math.floor(Math.random() * limitCount)
+
+    console.log("data_alert------", data_alert);
+    console.log("limitCount------", limitCount);
+    console.log("j------", j);
+
+
+    firstDate = data_alert[j].first_date;
+    secondDate = data_alert[j].second_date;
+    alertType = data_alert[j].type;
+    console.log("firstDate------", firstDate);
+    console.log("secondDate------", secondDate);
+    console.log("type------", alertType);
+    curMonth = firstDate.match(/[a-zA-Z]+/g).toString().toUpperCase();  // string for specific month e: AUG
+    curFirstDate = firstDate.match(/\d+/g);                             // first date for specific month  e: 22
+    curSecondDate = secondDate.match(/\d+/g);                           // second date for specific month  e: 24
+    requestMonth = firstDate.match(/[a-zA-Z]+/g).toString();
+    const d = new Date();
+    const realMonth = months[d.getMonth()];
+    const realDate = d.getDate();
+
+    if (realDate < 23) {
       correctIndex = 2;
+    }
+    else {
+      if (requestMonth == realMonth)
+        correctIndex = 1;
+      else
+        correctIndex = 2;
+    }
   }
 }
 
@@ -83,7 +80,7 @@ async function getRefreshTime(url) {
   const response = await fetch(url);
   const refresh_time = await response.json();
   timeConvertMin = getRandomInt(refresh_time[0].first_time, refresh_time[0].second_time) * 1000;
-  console.log("time---", timeConvertMin);
+  console.log("refresh time---", timeConvertMin);
 }
 getRefreshTime(refresh_time_url)
 
@@ -185,9 +182,9 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 } else if (
   location.href.indexOf('https://ha2.flica.net/online/mainmenu.cgi') >= 0
 ) {
-  const firstThread = setInterval(() => {
 
-    getNecessaryData();
+  getAlertData(month_url);
+  const firstThread = setInterval(() => {
     const els = Array.from(document.body.firstChild.nextSibling.firstChild.contentWindow.document.getElementsByTagName('a')).filter((e) => e.innerHTML.indexOf('View Reserve Grid') >= 0);
     // const els_opentime = Array.from(document.body.firstChild.nextSibling.firstChild.contentWindow.document.getElementsByTagName('a')).filter((e) => e.innerHTML.indexOf('View Opentime Pot') >= 0);
 
