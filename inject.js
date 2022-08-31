@@ -8,7 +8,7 @@ window.confirm = function confirm(msg) {
 
 const month_url = "https://topwebdev.pro/alerts";
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, curMonth, curFirstDate, curSecondDate, limitCount;
+let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, curMonth, curFirstDate, curSecondDate, limitCount, j;
 async function getAlertData(url) {
   const response = await fetch(url);
   data_alert = await response.json();
@@ -16,7 +16,7 @@ async function getAlertData(url) {
 
   if (data_alert == undefined) return;
   else {
-    let j = Math.floor(Math.random() * limitCount)
+    j = Math.floor(Math.random() * limitCount)
 
     console.log("data_alert------", data_alert);
     console.log("limitCount------", limitCount);
@@ -192,46 +192,42 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
       els[correctIndex].click();
       if (alertType == 1) {
         const secondThread = setInterval(async () => {
-          // console.log(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length);
           if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length == 0)
             return;
 
           const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
 
-          diff = localStorage.outdated && outdated.filter((x) => !JSON.parse(localStorage.outdated).includes(x));
-          console.log("diff============>", diff);
+          if (localStorage.getItem(`outdated${j}`) != null) {
+            diff = localStorage.getItem(`outdated${j}`) && outdated.filter((x) => !JSON.parse(localStorage.getItem(`outdated${j}`)).includes(x));
+            console.log("diff============>", diff);
+          }
 
-          localStorage.setItem('outdated', JSON.stringify(outdated));
-          localStorage.setItem('diff', JSON.stringify(diff));
+          localStorage.setItem(`outdated${j}`, JSON.stringify(outdated));
+          localStorage.setItem(`diff${j}`, JSON.stringify(diff));
 
           goToCurrentOpentimeUrl();
-
-          // els_opentime[correctIndex].click();
-          console.log('I will go to Opentime Pot');
 
           clearInterval(secondThread);
         }, 100);
       }
       else {
         const secondThread = setInterval(async () => {
-          // console.log(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length);
           if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green').length == 0)
             return;
 
           const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
 
-          diff = localStorage.outdated && outdated.filter((x) => !JSON.parse(localStorage.outdated).includes(x));
-          console.log("diff============>", diff);
+          if (localStorage.getItem(`outdated${j}`) != null) {
+            diff = localStorage.getItem(`outdated${j}`) && outdated.filter((x) => !JSON.parse(localStorage.getItem(`outdated${j}`)).includes(x));
+            console.log("diff============>", diff);
+          }
 
-          localStorage.setItem('outdated', JSON.stringify(outdated));
-          localStorage.setItem('diff', JSON.stringify(diff));
+          localStorage.setItem(`outdated${j}`, JSON.stringify(outdated));
+          localStorage.setItem(`diff${j}`, JSON.stringify(diff));
 
           goToCurrentOpentimeUrl();
-
-          // els_opentime[correctIndex].click();
-          console.log('I will go to Opentime Pot');
 
           clearInterval(secondThread);
         }, 100);
@@ -247,8 +243,6 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
   const fourthThread = setInterval(() => {
 
     // getting a range date from server    
-
-
     if (document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td').length > 0) {
       // localStorage.setItem('diff', JSON.stringify(['29AUG']));
 
@@ -291,7 +285,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
       results.forEach(function (item) {
         let curDate = parseInt(item[0].trim().split(curMonth)[0]);
         let offset = parseInt(item[2]);
-        if (diff == undefined) return;
+        if (diff == null) return;
         else {
           let diffDate = parseInt(diff[0].split(curMonth)[0]);
           console.log("diffDate======>", diffDate)
@@ -310,15 +304,14 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
       else {
         localStorage.setItem("opentime", JSON.stringify(finalResult))
         // console.log("localStorage.opentime =====>",localStorage.opentime);
-        if (localStorage.diff && localStorage.opentime) {
-          // console.log("opentime ====>", localStorage.opentime);
-          // console.log("diff ====>", localStorage.diff);
+        if (localStorage.getItem(`diff${j}`) && localStorage.opentime) {
+
           const data = JSON.parse(localStorage.opentime);
           chrome.runtime.sendMessage({ data }, function (response) {
             console.log(response.farewell);
           });
 
-          localStorage.setItem('diff', '');
+          localStorage.setItem(`diff${j}`, '');
         }
 
         setTimeout(() => {
