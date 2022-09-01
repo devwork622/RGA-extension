@@ -8,7 +8,7 @@ window.confirm = function confirm(msg) {
 
 const month_url = "https://topwebdev.pro/alerts";
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, curMonth, curFirstDate, curSecondDate, limitCount, j;
+let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, limitCount, j, curMonth;
 async function getAlertData(url) {
   const response = await fetch(url);
   data_alert = await response.json();
@@ -22,23 +22,24 @@ async function getAlertData(url) {
     console.log("limitCount------", limitCount);
     console.log("j------", j);
 
-
     firstDate = data_alert[j].first_date;
     secondDate = data_alert[j].second_date;
     alertType = data_alert[j].type;
     console.log("firstDate------", firstDate);
     console.log("secondDate------", secondDate);
     console.log("type------", alertType);
+
     curMonth = firstDate.match(/[a-zA-Z]+/g).toString().toUpperCase();  // string for specific month e: AUG
-    curFirstDate = firstDate.match(/\d+/g);                             // first date for specific month  e: 22
-    curSecondDate = secondDate.match(/\d+/g);                           // second date for specific month  e: 24
+    // curFirstDate = firstDate.match(/\d+/g);                             // first date for specific month  e: 22
+    // curSecondDate = secondDate.match(/\d+/g);                           // second date for specific month  e: 24
     requestMonth = firstDate.match(/[a-zA-Z]+/g).toString();
+
     const d = new Date();
     const realMonth = months[d.getMonth()];
     const realDate = d.getDate();
 
     if (realDate < 23) {
-      correctIndex = 2;
+      correctIndex = 1;
     }
     else {
       if (requestMonth == realMonth)
@@ -54,12 +55,8 @@ async function getAlertData(url) {
 function goToCurrentOpentimeUrl() {
   const openTimeUrl2022Aug = "https://ha2.flica.net/full/otframe.cgi?BCID=003.100&ViewOT=1";
   let i = months.indexOf(requestMonth) + 1;
-  const d = new Date();
-  const currentMonth = d.getMonth() + 1;
   let gap;
-  if (currentMonth <= i) {
-    gap = 100 + i - currentMonth;
-  }
+  gap = 100 + i - 8;
   const myArray = openTimeUrl2022Aug.split("100");
   let newIdx = gap.toString();
   let openTimeNewUrl = myArray[0] + newIdx + myArray[1];
@@ -134,7 +131,6 @@ class S extends B {
 }
 
 let diff;
-// let diff = ['29AUG'];
 const getElementByXpath = (path) => {
   var elements;
   try {
@@ -195,16 +191,16 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red').length == 0)
             return;
 
-          const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red'),
+          const outdated1 = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-red'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
 
-          if (localStorage.getItem(`outdated${j}`) != null) {
-            diff = localStorage.getItem(`outdated${j}`) && outdated.filter((x) => !JSON.parse(localStorage.getItem(`outdated${j}`)).includes(x));
-            console.log("diff============>", diff);
-          }
+          if (localStorage.outdated1 == null) diff1 = null;
+          else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));
+          diff1 = ['08SEP'];
+          console.log("diff1============>", diff1);
 
-          localStorage.setItem(`outdated${j}`, JSON.stringify(outdated));
-          localStorage.setItem(`diff${j}`, JSON.stringify(diff));
+          localStorage.setItem('outdated1', JSON.stringify(outdated1));
+          localStorage.setItem('diff1', diff1);
 
           goToCurrentOpentimeUrl();
 
@@ -216,16 +212,14 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           if (document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green').length == 0)
             return;
 
-          const outdated = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
+          const outdated2 = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
+          if (localStorage.outdated2 == null) diff2 = null;
+          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));
+          console.log("diff2============>", diff2);
 
-          if (localStorage.getItem(`outdated${j}`) != null) {
-            diff = localStorage.getItem(`outdated${j}`) && outdated.filter((x) => !JSON.parse(localStorage.getItem(`outdated${j}`)).includes(x));
-            console.log("diff============>", diff);
-          }
-
-          localStorage.setItem(`outdated${j}`, JSON.stringify(outdated));
-          localStorage.setItem(`diff${j}`, JSON.stringify(diff));
+          localStorage.setItem('outdated2', JSON.stringify(outdated2));
+          localStorage.setItem('diff2', diff2);
 
           goToCurrentOpentimeUrl();
 
@@ -246,7 +240,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
     if (document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td').length > 0) {
       // localStorage.setItem('diff', JSON.stringify(['29AUG']));
 
-      const days = [...document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td'),].filter((e) => e.innerText.includes(curMonth))
+      const days = [...document.getElementsByTagName('iframe')[2].contentDocument.getElementsByTagName('td'),].filter((e) => e.innerText.includes(localStorage.curMonth))
         .map((e) => [
           e.innerText,
           e.previousElementSibling.innerText,
@@ -256,68 +250,156 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             .nextElementSibling.nextElementSibling.innerText,
         ]);
 
+      const month_url = "https://topwebdev.pro/alerts";
+      async function getAlertDataAgain(url) {
+        const response = await fetch(url);
+        data_alert = await response.json();
+        let data_ppu = [];
+        let data_drop = [];
+        for (let i = 0; i < data_alert.length; i++) {
+          if (data_alert[i].type == 1)
+            data_ppu.push(data_alert[i]);
+          else
+            data_drop.push(data_alert[i]);
+        }
 
-      let results = [];     // data between firstDate and secondDate
-      let searchKey = []
-      let s_date = parseInt(curFirstDate);
-      let e_date = parseInt(curSecondDate);
-      for (let i = s_date; i <= e_date; i++) {
-        searchKey.push(i + curMonth)
-      }
+        if (localStorage.diff1) {
+          console.log("xxxxxxxxxxxxxxxxxx");
+          for (let k = 0; k < data_ppu.length; k++) {
+            let results = [];     // data between firstDate and secondDate
+            let searchKey = []
+            let s_date = parseInt(data_ppu[k].first_date.match(/\d+/g));
+            let e_date = parseInt(data_ppu[k].second_date.match(/\d+/g));
+            let strMonth = data_ppu[k].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
+            for (let i = s_date; i <= e_date; i++) {
+              if (i < 10) searchKey.push("0" + i + strMonth)
+              else searchKey.push(i + strMonth)
+            }
 
-      days.forEach(function (item) {
-        let date = item[0].trim();
-        let flag = false;
-        searchKey.forEach(function (keyItem) {
-          if (date.includes(keyItem)) {
-            flag = true;
-            return;
+            days.forEach(function (item) {
+              let date = item[0].trim();
+              let flag = false;
+              searchKey.forEach(function (keyItem) {
+                if (date.includes(keyItem)) {
+                  flag = true;
+                  return;
+                }
+              })
+              if (flag) {
+                results.push(item)
+              }
+            })
+
+            console.log("results ======", results);
+            let finalResult = [];
+
+            // console.log("localStorage.diff ===========>", localStorage.diff);
+            results.forEach(function (item) {
+              let curDate = parseInt(item[0].trim().split(strMonth));
+              let offset = parseInt(item[2]);
+              let diffDate = parseInt(localStorage.diff1.split(strMonth));
+              if (diffDate >= (curDate + offset - 1)) {
+                finalResult.push(item);
+              }
+
+            })
+
+            if (finalResult.length == 0) {
+              console.log("no result");
+              setTimeout(() => {
+                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+              }, timeConvertMin)
+            }
+            else {
+              console.log("sending result");
+              localStorage.setItem("opentime", JSON.stringify(finalResult))
+
+              if (localStorage.diff1 && localStorage.opentime) {
+                const data = JSON.parse(localStorage.opentime);
+                chrome.runtime.sendMessage({ data }, function (response) {
+                  console.log(response.farewell);
+                });
+
+                localStorage.setItem('diff1', '');
+              }
+
+              setTimeout(() => {
+                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+              }, timeConvertMin)
+            }
           }
-        })
-        if (flag) {
-          results.push(item)
         }
-      })
+        else if (localStorage.diff2) {
+          for (let k = 0; k < data_drop.length; k++) {
+            let results = [];     // data between firstDate and secondDate
+            let searchKey = []
+            let s_date = parseInt(data_ppu[k].first_date.match(/\d+/g));
+            let e_date = parseInt(data_ppu[k].second_date.match(/\d+/g));
+            let strMonth = data_ppu[k].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
+            for (let i = s_date; i <= e_date; i++) {
+              if (i < 10) searchKey.push("0" + i + strMonth)
+              else searchKey.push(i + strMonth)
+            }
 
-      let finalResult = [];
+            console.log("searchKey", searchKey);
 
-      // console.log("localStorage.diff ===========>", localStorage.diff);
-      results.forEach(function (item) {
-        let curDate = parseInt(item[0].trim().split(curMonth)[0]);
-        let offset = parseInt(item[2]);
-        if (diff == null) return;
-        else {
-          let diffDate = parseInt(diff[0].split(curMonth)[0]);
-          console.log("diffDate======>", diffDate)
-          if (diffDate >= (curDate + offset - 1)) {
-            finalResult.push(item);
+            days.forEach(function (item) {
+              let date = item[0].trim();
+              let flag = false;
+              searchKey.forEach(function (keyItem) {
+                if (date.includes(keyItem)) {
+                  flag = true;
+                  return;
+                }
+              })
+              if (flag) {
+                results.push(item)
+              }
+            })
+
+            let finalResult = [];
+
+            // console.log("localStorage.diff ===========>", localStorage.diff);
+            results.forEach(function (item) {
+              let curDate = parseInt(item[0].trim().split(strMonth));
+              let offset = parseInt(item[2]);
+              let diffDate = parseInt(localStorage.diff2.split(strMonth));
+              if (diffDate >= (curDate + offset - 1)) {
+                finalResult.push(item);
+              }
+
+            })
+
+            if (finalResult.length == 0) {
+              console.log("no result");
+              setTimeout(() => {
+                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+              }, timeConvertMin)
+            }
+            else {
+              console.log("sending result");
+              localStorage.setItem("opentime", JSON.stringify(finalResult))
+
+              if (localStorage.diff2 && localStorage.opentime) {
+                const data = JSON.parse(localStorage.opentime);
+                chrome.runtime.sendMessage({ data }, function (response) {
+                  console.log(response.farewell);
+                });
+
+                localStorage.setItem('diff2', '');
+              }
+
+              setTimeout(() => {
+                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+              }, timeConvertMin)
+            }
           }
         }
-      })
-
-      if (finalResult.length == 0) {
-        console.log("no result");
-        setTimeout(() => {
-          location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-        }, timeConvertMin)
       }
-      else {
-        localStorage.setItem("opentime", JSON.stringify(finalResult))
-        // console.log("localStorage.opentime =====>",localStorage.opentime);
-        if (localStorage.getItem(`diff${j}`) && localStorage.opentime) {
+      getAlertDataAgain(month_url);
 
-          const data = JSON.parse(localStorage.opentime);
-          chrome.runtime.sendMessage({ data }, function (response) {
-            console.log(response.farewell);
-          });
 
-          localStorage.setItem(`diff${j}`, '');
-        }
 
-        setTimeout(() => {
-          location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-        }, timeConvertMin)
-      }
       clearInterval(fourthThread);
     }
   }, 500);
