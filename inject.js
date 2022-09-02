@@ -196,7 +196,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
           if (localStorage.outdated1 == null) diff1 = null;
           else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));
-          diff1 = ['08SEP'];
+          // diff1 = ['08SEP'];
           console.log("diff1============>", diff1);
 
           localStorage.setItem('outdated1', JSON.stringify(outdated1));
@@ -264,7 +264,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
         }
 
         if (localStorage.diff1) {
-          console.log("xxxxxxxxxxxxxxxxxx");
+          console.log("diff1", localStorage.diff1)
           for (let k = 0; k < data_ppu.length; k++) {
             let results = [];     // data between firstDate and secondDate
             let searchKey = []
@@ -299,6 +299,10 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               let offset = parseInt(item[2]);
               let diffDate = parseInt(localStorage.diff1.split(strMonth));
               if (diffDate >= (curDate + offset - 1)) {
+                item.push("PPU");
+                item.push(data_ppu[k].name);
+                item.push(data_ppu[k].first_date);
+                item.push(data_ppu[k].second_date);
                 finalResult.push(item);
               }
 
@@ -306,9 +310,6 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
             if (finalResult.length == 0) {
               console.log("no result");
-              setTimeout(() => {
-                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-              }, timeConvertMin)
             }
             else {
               console.log("sending result");
@@ -323,25 +324,21 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 localStorage.setItem('diff1', '');
               }
 
-              setTimeout(() => {
-                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-              }, timeConvertMin)
             }
           }
         }
         else if (localStorage.diff2) {
+          console.log("diff2", localStorage.diff2)
           for (let k = 0; k < data_drop.length; k++) {
             let results = [];     // data between firstDate and secondDate
             let searchKey = []
-            let s_date = parseInt(data_ppu[k].first_date.match(/\d+/g));
-            let e_date = parseInt(data_ppu[k].second_date.match(/\d+/g));
-            let strMonth = data_ppu[k].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
+            let s_date = parseInt(data_drop[k].first_date.match(/\d+/g));
+            let e_date = parseInt(data_drop[k].second_date.match(/\d+/g));
+            let strMonth = data_drop[k].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
             for (let i = s_date; i <= e_date; i++) {
               if (i < 10) searchKey.push("0" + i + strMonth)
               else searchKey.push(i + strMonth)
             }
-
-            console.log("searchKey", searchKey);
 
             days.forEach(function (item) {
               let date = item[0].trim();
@@ -365,6 +362,10 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               let offset = parseInt(item[2]);
               let diffDate = parseInt(localStorage.diff2.split(strMonth));
               if (diffDate >= (curDate + offset - 1)) {
+                item.push("DROP");
+                item.push(data_drop[k].name);
+                item.push(data_drop[k].first_date);
+                item.push(data_drop[k].second_date);
                 finalResult.push(item);
               }
 
@@ -372,9 +373,6 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
             if (finalResult.length == 0) {
               console.log("no result");
-              setTimeout(() => {
-                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-              }, timeConvertMin)
             }
             else {
               console.log("sending result");
@@ -389,12 +387,14 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 localStorage.setItem('diff2', '');
               }
 
-              setTimeout(() => {
-                location.href = "https://ha2.flica.net/online/mainmenu.cgi"
-              }, timeConvertMin)
             }
           }
         }
+
+        setTimeout(() => {
+          location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+        }, timeConvertMin)
+
       }
       getAlertDataAgain(month_url);
 
