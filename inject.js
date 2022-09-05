@@ -263,9 +263,12 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             data_drop.push(data_alert[i]);
         }
 
+        let ppuCount = data_ppu.length;
+        let dropCount = data_drop.length;
         if (localStorage.diff1) {
           console.log("diff1", localStorage.diff1)
-          for (let k = 0; k < data_ppu.length; k++) {
+          let k = 0;
+          function sendMessage () {
             let results = [];     // data between firstDate and secondDate
             let searchKey = []
             let s_date = parseInt(data_ppu[k].first_date.match(/\d+/g));
@@ -323,9 +326,25 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
                 localStorage.setItem('diff1', '');
               }
-
             }
+           
           }
+          
+          function callSendMessage() {            
+            if(k < ppuCount) {
+              sendMessage();
+              k++;
+              againCallSendMessage();
+            }
+            else
+              return;
+          }
+
+          function againCallSendMessage() {
+            callSendMessage();
+          }
+
+          callSendMessage();
         }
         else if (localStorage.diff2) {
           console.log("diff2", localStorage.diff2)
