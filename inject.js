@@ -6,6 +6,8 @@ window.confirm = function confirm(msg) {
   return true; /*simulates user clicking yes*/
 };
 
+let diff1 = [];
+let diff2 = [];
 const month_url = "https://topwebdev.pro/alerts";
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 let data_alert, requestMonth, correctIndex, alertType, firstDate, secondDate, limitCount, j, curMonth;
@@ -130,7 +132,6 @@ class S extends B {
   }
 }
 
-let diff;
 const getElementByXpath = (path) => {
   var elements;
   try {
@@ -195,7 +196,8 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
 
           if (localStorage.outdated1 == null) diff1 = null;
-          else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));
+          else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));   
+          // diff1 = ['06SEP'];
           console.log("diff1============>", diff1);
 
           localStorage.setItem('outdated1', JSON.stringify(outdated1));
@@ -214,13 +216,86 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           const outdated2 = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
           if (localStorage.outdated2 == null) diff2 = null;
-          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));
+          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));          
           console.log("diff2============>", diff2);
 
           localStorage.setItem('outdated2', JSON.stringify(outdated2));
           localStorage.setItem('diff2', diff2);
 
-          goToCurrentOpentimeUrl();
+          const month_url = "https://topwebdev.pro/alerts";
+          async function getDropFromAlert(url) {
+            const response = await fetch(url);
+            data_alert = await response.json();
+            let data_drop = [];
+            for (let i = 0; i < data_alert.length; i++) {
+              if (data_alert[i].type == 2)
+                data_drop.push(data_alert[i]);
+            }
+
+            let ppuCount = data_drop.length;
+            if (localStorage.diff2) {
+              let m = 0;
+              function sendMessage() {
+                console.log('sendMessage')
+               
+                let searchKey = "";
+                let getClass;
+                let count = 0;
+                let s_date = parseInt(data_drop[m].first_date.match(/\d+/g));
+                let e_date = parseInt(data_drop[m].second_date.match(/\d+/g));
+                let diff2Num = parseInt(diff2[0].match(/\d+/g));
+                let period = e_date - s_date + 1;
+                let strMonth = data_drop[m].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
+
+                if(diff2Num >= s_date && diff2Num <= e_date) {
+                  for (let i = s_date; i <= e_date; i++) {
+                    if (i < 10) searchKey = ("0" + i + strMonth)
+                    else searchKey = (i + strMonth)
+  
+                    getClass = [...document.getElementsByTagName('iframe')[1].contentDocument.getElementsByTagName('td'),].filter((e) => e.innerText.includes(searchKey))
+                      .map((e) => [
+                        e.nextElementSibling.nextElementSibling.nextElementSibling.getAttribute('class')
+                      ]);
+                    if (getClass[0] = ! "ng-scope buffer-color-green") return;
+                    else count++;
+                  }
+  
+                  console.log("count", count);
+                  console.log("period", period);
+                  if (count == period) {
+                    console.log("sending result");
+                    console.log("data_drop[m]", (data_drop[m]));
+                    let data = [];
+                    data.push(data_drop[m]);
+                    chrome.runtime.sendMessage({ data }, function (response) {
+                      console.log(response.farewell);
+                    });
+  
+                    localStorage.setItem('diff2', '');
+  
+                  }
+                }
+
+              }
+
+              function callSendMessage() {
+                if (m < ppuCount) {
+                  sendMessage();
+                  m++;
+                  againCallSendMessage();
+                }
+                else
+                  return;
+              }
+
+              function againCallSendMessage() {
+                callSendMessage();
+              }
+
+              callSendMessage();
+            }
+          }
+          getDropFromAlert(month_url);
 
           clearInterval(secondThread);
         }, 100);
@@ -254,16 +329,13 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
         const response = await fetch(url);
         data_alert = await response.json();
         let data_ppu = [];
-        let data_drop = [];
         for (let i = 0; i < data_alert.length; i++) {
           if (data_alert[i].type == 1)
             data_ppu.push(data_alert[i]);
-          else
-            data_drop.push(data_alert[i]);
         }
 
         let ppuCount = data_ppu.length
-        let dropCount = data_drop.length
+        // let dropCount = data_drop.length
         if (localStorage.diff1) {
           console.log("diff1", localStorage.diff1)
           let k = 0;
@@ -291,12 +363,9 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 results.push(item)
               }
             })
-
-            // console.log("searchKey", searchKey)
-            // console.log("results ======", results);
+          
             let finalResult = [];
-
-            // console.log("localStorage.diff ===========>", localStorage.diff);
+           
             results.forEach(function (item) {
               let curDate = parseInt(item[0].trim().split(strMonth));
               let offset = parseInt(item[2]);
@@ -346,86 +415,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
           callSendMessage();
         }
-        else if (localStorage.diff2) {
-          console.log("diff2", localStorage.diff2)
-          let m;
-          function sendMessage() {
-            let results = [];     // data between firstDate and secondDate
-            let searchKey = []
-            let s_date = parseInt(data_drop[m].first_date.match(/\d+/g));
-            let e_date = parseInt(data_drop[m].second_date.match(/\d+/g));
-            let strMonth = data_drop[m].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
-            for (let i = s_date; i <= e_date; i++) {
-              if (i < 10) searchKey.push("0" + i + strMonth)
-              else searchKey.push(i + strMonth)
-            }
 
-            days.forEach(function (item) {
-              let date = item[0].trim();
-              let flag = false;
-              searchKey.forEach(function (keyItem) {
-                if (date.includes(keyItem)) {
-                  flag = true;
-                  return;
-                }
-              })
-              if (flag) {
-                results.push(item)
-              }
-            })
-
-            let finalResult = [];
-
-            // console.log("localStorage.diff ===========>", localStorage.diff);
-            results.forEach(function (item) {
-              let curDate = parseInt(item[0].trim().split(strMonth));
-              let offset = parseInt(item[2]);
-              let diffDate = parseInt(localStorage.diff2.split(strMonth));
-              if (diffDate >= (curDate + offset - 1)) {
-                item.push("DROP");
-                item.push(data_drop[m].name);
-                item.push(data_drop[m].first_date);
-                item.push(data_drop[m].second_date);
-                finalResult.push(item);
-              }
-
-            })
-
-            if (finalResult.length == 0) {
-              console.log("no result");
-            }
-            else {
-              console.log("sending result");
-              localStorage.setItem("opentime", JSON.stringify(finalResult))
-
-              if (localStorage.diff2 && localStorage.opentime) {
-                const data = JSON.parse(localStorage.opentime);
-                chrome.runtime.sendMessage({ data }, function (response) {
-                  console.log(response.farewell);
-                });
-
-                localStorage.setItem('diff2', '');
-              }
-
-            }
-          }
-
-          function callSendMessage() {
-            if (m < ppuCount) {
-              sendMessage();
-              m++;
-              againCallSendMessage();
-            }
-            else
-              return;
-          }
-
-          function againCallSendMessage() {
-            callSendMessage();
-          }
-
-          callSendMessage();
-        }
 
         setTimeout(() => {
           location.href = "https://ha2.flica.net/online/mainmenu.cgi"
