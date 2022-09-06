@@ -294,6 +294,11 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
               callSendMessage();
             }
+
+            setTimeout(() => {
+              location.href = "https://ha2.flica.net/online/mainmenu.cgi"
+            }, timeConvertMin)
+            
           }
           getDropFromAlert(month_url);
 
