@@ -197,7 +197,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
           if (localStorage.outdated1 == null) diff1 = null;
           else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));   
-          // diff1 = ['06SEP'];
+          // diff1 = ['13SEP'];
           console.log("diff1============>", diff1);
 
           localStorage.setItem('outdated1', JSON.stringify(outdated1));
@@ -216,7 +216,8 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           const outdated2 = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
           if (localStorage.outdated2 == null) diff2 = null;
-          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));          
+          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));   
+          // diff2 = ['21SEP'] ;
           console.log("diff2============>", diff2);
 
           localStorage.setItem('outdated2', JSON.stringify(outdated2));
@@ -232,7 +233,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 data_drop.push(data_alert[i]);
             }
 
-            let ppuCount = data_drop.length;
+            let dropCount = data_drop.length;
             if (localStorage.diff2) {
               let m = 0;
               function sendMessage() {
@@ -256,8 +257,10 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                       .map((e) => [
                         e.nextElementSibling.nextElementSibling.nextElementSibling.getAttribute('class')
                       ]);
-                    if (getClass[0] = ! "ng-scope buffer-color-green") return;
-                    else count++;
+                     
+                    if (getClass[0][0] == "ng-scope buffer-color-green") {
+                       count++;
+                    }
                   }
   
                   console.log("count", count);
@@ -279,7 +282,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               }
 
               function callSendMessage() {
-                if (m < ppuCount) {
+                if (m < dropCount) {
                   sendMessage();
                   m++;
                   againCallSendMessage();
@@ -372,17 +375,25 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             let finalResult = [];
            
             results.forEach(function (item) {
-              let curDate = parseInt(item[0].trim().split(strMonth));
-              let offset = parseInt(item[2]);
+              let curDate = parseInt(item[0].trim().split(strMonth));    //Dates
+              let offset = parseInt(item[2]);     //Days
               let diffDate = parseInt(localStorage.diff1.split(strMonth));
-              if (diffDate >= (curDate + offset - 1)) {
+              if(curDate <= diffDate) {
                 item.push("PPU");
                 item.push(data_ppu[k].name);
                 item.push(data_ppu[k].first_date);
                 item.push(data_ppu[k].second_date);
                 finalResult.push(item);
               }
-
+              else {
+                if (diffDate >= (curDate + offset - 1)) {
+                  item.push("PPU");
+                  item.push(data_ppu[k].name);
+                  item.push(data_ppu[k].first_date);
+                  item.push(data_ppu[k].second_date);
+                  finalResult.push(item);
+                }
+              }
             })
 
             if (finalResult.length == 0) {
@@ -433,5 +444,11 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
       clearInterval(fourthThread);
     }
-  }, 500);
+  }, 500);  
+  
 }
+
+let oneDayTime = 24 * 3600 * 1000;
+setTimeout(() => {
+  location.href = "https://ha2.flica.net/ui/public/login";
+}, oneDayTime);
