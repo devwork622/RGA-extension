@@ -196,8 +196,8 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
 
           if (localStorage.outdated1 == null) diff1 = null;
-          else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));   
-          // diff1 = ['13SEP'];
+          else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));
+          //diff1 = ['18SEP'];
           console.log("diff1============>", diff1);
 
           localStorage.setItem('outdated1', JSON.stringify(outdated1));
@@ -216,8 +216,8 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
           const outdated2 = Array.from(document.getElementsByTagName('iframe')[1].contentWindow.document.querySelectorAll('table td.ng-scope.buffer-color-green'),
             (e) => e.previousElementSibling.previousElementSibling.previousElementSibling.innerText);
           if (localStorage.outdated2 == null) diff2 = null;
-          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));   
-          // diff2 = ['21SEP'] ;
+          else diff2 = localStorage.outdated2 && outdated2.filter((x) => !JSON.parse(localStorage.outdated2).includes(x));
+          // diff2 = ['25SEP'] ;
           console.log("diff2============>", diff2);
 
           localStorage.setItem('outdated2', JSON.stringify(outdated2));
@@ -238,7 +238,6 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               let m = 0;
               function sendMessage() {
                 console.log('sendMessage')
-               
                 let searchKey = "";
                 let getClass;
                 let count = 0;
@@ -248,21 +247,21 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 let period = e_date - s_date + 1;
                 let strMonth = data_drop[m].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
 
-                if(diff2Num >= s_date && diff2Num <= e_date) {
+                if (diff2Num >= s_date && diff2Num <= e_date) {
                   for (let i = s_date; i <= e_date; i++) {
                     if (i < 10) searchKey = ("0" + i + strMonth)
                     else searchKey = (i + strMonth)
-  
+
                     getClass = [...document.getElementsByTagName('iframe')[1].contentDocument.getElementsByTagName('td'),].filter((e) => e.innerText.includes(searchKey))
                       .map((e) => [
                         e.nextElementSibling.nextElementSibling.nextElementSibling.getAttribute('class')
                       ]);
-                     
+
                     if (getClass[0][0] == "ng-scope buffer-color-green") {
-                       count++;
+                      count++;
                     }
                   }
-  
+
                   console.log("count", count);
                   console.log("period", period);
                   if (count == period) {
@@ -273,9 +272,9 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                     chrome.runtime.sendMessage({ data }, function (response) {
                       console.log(response.farewell);
                     });
-  
+
                     localStorage.setItem('diff2', '');
-  
+
                   }
                 }
 
@@ -295,13 +294,13 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 callSendMessage();
               }
 
-              callSendMessage();
+              sendMessage();
             }
 
             setTimeout(() => {
               location.href = "https://ha2.flica.net/online/mainmenu.cgi"
             }, timeConvertMin)
-            
+
           }
           getDropFromAlert(month_url);
 
@@ -371,30 +370,24 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 results.push(item)
               }
             })
-          
+
             let finalResult = [];
-           
+            console.log("results",results);
             results.forEach(function (item) {
               let curDate = parseInt(item[0].trim().split(strMonth));    //Dates
               let offset = parseInt(item[2]);     //Days
               let diffDate = parseInt(localStorage.diff1.split(strMonth));
-              if(curDate <= diffDate) {
+              let validDate = curDate + offset - 1;
+              // console.log("validDate",validDate)
+              if (diffDate >= validDate) {
                 item.push("PPU");
                 item.push(data_ppu[k].name);
                 item.push(data_ppu[k].first_date);
                 item.push(data_ppu[k].second_date);
                 finalResult.push(item);
               }
-              else {
-                if (diffDate >= (curDate + offset - 1)) {
-                  item.push("PPU");
-                  item.push(data_ppu[k].name);
-                  item.push(data_ppu[k].first_date);
-                  item.push(data_ppu[k].second_date);
-                  finalResult.push(item);
-                }
-              }
             })
+            console.log("finalResult-----",finalResult)
 
             if (finalResult.length == 0) {
               console.log("no result");
@@ -419,7 +412,9 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
             if (k < ppuCount) {
               sendMessage();
               k++;
-              againCallSendMessage();
+              setTimeout(()=> {
+                againCallSendMessage();
+              }, 500)
             }
             else
               return;
@@ -444,11 +439,11 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
       clearInterval(fourthThread);
     }
-  }, 500);  
-  
+  }, 500);
+
 }
 
-let oneDayTime = 24 * 3600 * 1000;
+let oneDayTime = 10 * 3600 * 1000;
 setTimeout(() => {
   location.href = "https://ha2.flica.net/ui/public/login";
 }, oneDayTime);
