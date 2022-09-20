@@ -246,7 +246,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 let diff2Num = parseInt(diff2[0].match(/\d+/g));
                 let period = e_date - s_date + 1;
                 let strMonth = data_drop[m].first_date.match(/[a-zA-Z]+/g).toString().toUpperCase();
-
+                let confirmData;
                 if (diff2Num >= s_date && diff2Num <= e_date) {
                   for (let i = s_date; i <= e_date; i++) {
                     if (i < 10) searchKey = ("0" + i + strMonth)
@@ -259,6 +259,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
                     if (getClass[0][0] == "ng-scope buffer-color-green") {
                       count++;
+                      confirmData += "\n" + "---" + "\n" + i + "G";
                     }
                   }
 
@@ -269,6 +270,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                     console.log("data_drop[m]", (data_drop[m]));
                     let data = [];
                     data.push(data_drop[m]);
+                    data.push(confirmData);
                     chrome.runtime.sendMessage({ data }, function (response) {
                       console.log(response.farewell);
                     });
@@ -384,6 +386,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
                 item.push(data_ppu[k].name);
                 item.push(data_ppu[k].first_date);
                 item.push(data_ppu[k].second_date);
+                item.push(diffDate);
                 finalResult.push(item);
               }
             })
