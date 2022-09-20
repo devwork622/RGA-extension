@@ -259,7 +259,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
                     if (getClass[0][0] == "ng-scope buffer-color-green") {
                       count++;
-                      confirmData += "\n" + "---------" + "\n" + i + " - G";
+                      confirmData += "\n" + "---------" + "\n" + i + " - G" + "\n";
                     }
                   }
 
