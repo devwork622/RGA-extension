@@ -197,7 +197,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
           if (localStorage.outdated1 == null) diff1 = null;
           else diff1 = localStorage.outdated1 && outdated1.filter((x) => !JSON.parse(localStorage.outdated1).includes(x));
-          //diff1 = ['18SEP'];
+          //diff1 = ['24SEP'];
           console.log("diff1============>", diff1);
 
           localStorage.setItem('outdated1', JSON.stringify(outdated1));
@@ -259,7 +259,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
 
                     if (getClass[0][0] == "ng-scope buffer-color-green") {
                       count++;
-                      confirmData += "\n" + "---" + "\n" + i + "G";
+                      confirmData += "\n" + "---------" + "\n" + i + " - G";
                     }
                   }
 
@@ -380,7 +380,7 @@ if (location.href.indexOf('https://ha2.flica.net/ui/public/login/') >= 0) {
               let offset = parseInt(item[2]);     //Days
               let diffDate = parseInt(localStorage.diff1.split(strMonth));
               let validDate = curDate + offset - 1;
-              // console.log("validDate",validDate)
+              console.log("diffDate", diffDate)
               if (diffDate >= validDate) {
                 item.push("PPU");
                 item.push(data_ppu[k].name);
